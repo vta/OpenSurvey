@@ -1,1 +1,1 @@
-web: gunicorn OpenSurvey/OpenSurvey.wsgi --log-file -
+web: gunicorn OpenSurvey.wsgi --log-file -
