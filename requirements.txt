@@ -1,5 +1,6 @@
 dj-database-url==0.4.0
 Django==1.9.3
+django-cors-headers==1.1.0
 django-generic-positions==0.2.1
 django-hvad==1.5.0
 django-libs==1.66.13
