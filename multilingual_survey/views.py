@@ -189,7 +189,7 @@ class SurveyResponseList(APIView):
 
     def post(self, request, format=None):
         data = JSONParser().parse(request)
-        serializer = SurveyResponseSerializer(data=data, context={'request': request})
+        serializer = SurveyResponseSerializer(data=data, many=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return JSONResponse(serializer.data, status=status.HTTP_201_CREATED)
