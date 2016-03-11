@@ -6,10 +6,7 @@ This project uses [Foreman](https://github.com/ddollar/foreman) for managing sec
 To get started, install Foreman (`$ gem install foreman`) and then create a `.env` file in the base directory containing the following:
 
 ```
-DB_NAME=[the name of your postgres database, like 'opensurvey']
-DB_USERNAME=[your database username, like 'opensurvey_admin']
-DB_PASSWORD=[the password for the database user]
-DB_
+DATABASE_URL=[database type]://[username]:[password]@[host]:[port]/[database name]
 SECRET_KEY=[random key to be used as a secret]
 DEBUG=True
 ```

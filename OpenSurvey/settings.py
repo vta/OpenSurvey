@@ -83,26 +83,18 @@ WSGI_APPLICATION = 'OpenSurvey.wsgi.application'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.postgresql_psycopg2',
-            'NAME':     os.environ['DB_NAME'],
-            'USER':     os.environ['DB_USERNAME'],
-            'PASSWORD': os.environ['DB_PASSWORD'],
-            'HOST':     'localhost',
-            'PORT':     '',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'opensurvey',
     }
+}
 
 
 # Update database configuration with $DATABASE_URL.
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
-
 
 
 # Password validation
