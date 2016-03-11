@@ -85,17 +85,17 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql_psycopg2',
-        'NAME':     os.environ['DB_NAME'],
-        'USER':     os.environ['DB_USERNAME'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST':     'localhost',
-        'PORT':     '',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql_psycopg2',
+            'NAME':     os.environ['DB_NAME'],
+            'USER':     os.environ['DB_USERNAME'],
+            'PASSWORD': os.environ['DB_PASSWORD'],
+            'HOST':     'localhost',
+            'PORT':     '',
+        }
     }
-}
 
 
 # Update database configuration with $DATABASE_URL.
