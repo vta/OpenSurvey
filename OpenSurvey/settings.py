@@ -17,11 +17,13 @@ from django.utils.translation import ugettext_lazy as _
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+assert 'SECRET_KEY' in os.environ, 'Set SECRET_KEY in your .env file!'
+assert 'DB_NAME' in os.environ, 'Set DB_NAME in your .env file!'
+assert 'DB_USERNAME' in os.environ, 'Set DB_USERNAME in your .env file!'
+assert 'DB_PASSWORD' in os.environ, 'Set DB_PASSWORD in your .env file!'
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'jf(ffg0x5bd_6!l2((6b0zpfa0b!sqijfcbk3x%8=y5a3xb5je'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,10 +88,15 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE':   'django.db.backends.postgresql_psycopg2',
+        'NAME':     os.environ['DB_NAME'],
+        'USER':     os.environ['DB_USERNAME'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST':     'localhost',
+        'PORT':     '',
     }
 }
+
 
 # Update database configuration with $DATABASE_URL.
 import dj_database_url

@@ -195,6 +195,34 @@ class SurveyResponseList(APIView):
             return JSONResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JSONResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class SurveyResponseSummary(APIView):
+    def list_to_dict(self, vals):
+        x = {}
+        for k, v in vals:
+            x.setdefault(k, []).append(v)
+        return x
+
+    def dict_avg(self, d):
+        x = {}
+        for k, v in d.iteritems():
+            x[k] = sum([int(vp) for vp in v])/len(v)
+        return x
+
+    def get(self, request, pk, format=None):
+        output = request.query_params.get("output")
+        if output == 'average':
+            queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
+            set_as_dict = self.list_to_dict(queryset)
+            averages = self.dict_avg(set_as_dict)
+            return JSONResponse(averages)
+        elif output == 'values':
+            queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
+            set_as_dict = self.list_to_dict(queryset)
+            return JSONResponse(set_as_dict)
+        else:
+            queryset = models.SurveyResponse.objects.filter(question__survey_id=pk)
+            serializer = SurveyResponseSerializer(queryset, many=True)
+            return JSONResponse(serializer.data)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """

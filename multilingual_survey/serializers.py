@@ -43,10 +43,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SurveyResponseSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.ReadOnlyField(source='user.email')
     question = serializers.PrimaryKeyRelatedField(queryset=models.SurveyQuestion.objects.all())
     answer = serializers.PrimaryKeyRelatedField(queryset=models.SurveyAnswer.objects.all())
 
     class Meta:
         model = models.SurveyResponse
-        fields = ('user', 'session_id', 'question', 'answer', 'other_answer', 'date_created')
+        fields = ( 'session_id', 'question', 'answer', 'other_answer', 'other_answer_numeric', 'date_created')

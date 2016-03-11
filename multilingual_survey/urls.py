@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^surveys/(?P<pk>[0-9]+)/$', views.SurveyDetail.as_view()),
 
     url(r'^responses/$', views.SurveyResponseList.as_view()),
+    url(r'^responses/(?P<pk>[0-9]+)/$', views.SurveyResponseSummary.as_view()),
 
     url(r'^questions/$', views.QuestionList.as_view()),
 ]

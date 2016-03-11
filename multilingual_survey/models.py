@@ -122,7 +122,7 @@ class SurveyQuestion(TranslationModelMixin, TranslatableModel):
     )
 
     def __unicode__(self):
-        return self.title
+        return self.lazy_translation_getter('title')
 
     class Meta:
         unique_together = ('slug', 'survey')
@@ -202,6 +202,12 @@ class SurveyResponse(models.Model):
         SurveyAnswer,
         verbose_name=_('Answer'),
         related_name='responses',
+    )
+
+    other_answer_numeric = models.IntegerField(
+        verbose_name=_('Other answer numeric'),
+        null=True,
+        blank=True,
     )
 
     other_answer = models.CharField(
