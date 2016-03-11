@@ -39,3 +39,8 @@ For more info see:
 
 * https://gist.github.com/wrburgess/5528649
 * https://devcenter.heroku.com/articles/heroku-postgres-import-export
+
+To put the database from local dev to Heroku, do:
+```
+pg_dump --no-acl --no-owner -h localhost -U opensurvey_admin opensurvey | heroku pg:psql
+```
