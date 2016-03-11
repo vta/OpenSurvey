@@ -18,9 +18,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 assert 'SECRET_KEY' in os.environ, 'Set SECRET_KEY in your .env file!'
-assert 'DB_NAME' in os.environ, 'Set DB_NAME in your .env file!'
-assert 'DB_USERNAME' in os.environ, 'Set DB_USERNAME in your .env file!'
-assert 'DB_PASSWORD' in os.environ, 'Set DB_PASSWORD in your .env file!'
+# assert 'DB_NAME' in os.environ, 'Set DB_NAME in your .env file!'
+# assert 'DB_USERNAME' in os.environ, 'Set DB_USERNAME in your .env file!'
+# assert 'DB_PASSWORD' in os.environ, 'Set DB_PASSWORD in your .env file!'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
