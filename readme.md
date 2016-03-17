@@ -44,3 +44,8 @@ To put the database from local dev to Heroku, do:
 ```
 pg_dump --no-acl --no-owner -h localhost -U opensurvey_admin opensurvey | heroku pg:psql
 ```
+
+
+Social authentication is handled with the [django-allauth](http://django-allauth.readthedocs.org/en/latest/index.html) and [django-rest-auth](http://django-rest-auth.readthedocs.org/en/latest/index.html) packages. [Configuration](http://django-allauth.readthedocs.org/en/latest/providers.html) is done within the admin site.
+
+http://localhost:8000/accounts/facebook/login/callback/

@@ -6,6 +6,12 @@ django-hvad==1.5.0
 django-libs==1.66.13
 djangorestframework==3.3.2
 gunicorn==19.4.5
-wheel==0.29.0
+oauthlib==1.0.3
+psycopg2==2.6.1
+PyJWT==1.4.0
+python-openid==2.2.5
+requests==2.9.1
+requests-oauthlib==0.6.1
+six==1.10.0
 whitenoise==2.0.6
 psycopg2==2.6.1

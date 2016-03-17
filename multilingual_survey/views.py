@@ -147,8 +147,17 @@ class SurveyDetail(APIView):
 
     def get(self, request, pk, format=None):
         survey = self.get_object(pk)
-        serializer = SurveyDetailSerializer(survey)
-        return JSONResponse(serializer.data)
+        questions = self.get_related_questions(pk)
+        questions_serialized = []
+        for q in questions:
+            questions_serialized.append(SurveyQuestionSerializer(q).data)
+            questions_serialized[-1]['answers']  = SurveyAnswerSerializer(self.get_related_answers(q.pk), many=True).data
+           
+        resp_obj = SurveySerializer(survey).data
+        resp_obj['questions'] = questions_serialized
+
+        return JSONResponse(resp_obj)
+
 
     def put(self, request, pk, format=None):
         survey = self.get_object(pk)
@@ -205,16 +214,18 @@ class SurveyResponseSummary(APIView):
     def dict_avg(self, d):
         x = {}
         for k, v in d.iteritems():
-            x[k] = sum([int(vp) for vp in v])/len(v)
+            x[k] = sum([float(vp) for vp in v])/len(v)
         return x
 
     def get(self, request, pk, format=None):
         output = request.query_params.get("output")
         if output == 'average':
             queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
+
             set_as_dict = self.list_to_dict(queryset)
             averages = self.dict_avg(set_as_dict)
-            return JSONResponse(averages)
+            response = {'stats': {'count' : len(queryset)}, 'averages' : averages}
+            return JSONResponse(response)
         elif output == 'values':
             queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
             set_as_dict = self.list_to_dict(queryset)

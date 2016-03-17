@@ -22,6 +22,8 @@ from multilingual_survey.serializers import SurveySerializer, UserSerializer
 
 from multilingual_survey.views import UserViewSet
 
+from views import FacebookLogin, TwitterLogin
+
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -37,4 +39,10 @@ urlpatterns = [
     # rest_framework
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+    url(r'^accounts/', include('allauth.urls')),    # django-allauth
+
+    url(r'^rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login'),
+    url(r'^rest-auth/twitter/$', TwitterLogin.as_view(), name='twitter_login'),
 ]

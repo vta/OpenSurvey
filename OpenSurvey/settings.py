@@ -19,9 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 assert 'SECRET_KEY' in os.environ, 'Set SECRET_KEY in your .env file!'
-# assert 'DB_NAME' in os.environ, 'Set DB_NAME in your .env file!'
-# assert 'DB_USERNAME' in os.environ, 'Set DB_USERNAME in your .env file!'
-# assert 'DB_PASSWORD' in os.environ, 'Set DB_PASSWORD in your .env file!'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -46,7 +43,15 @@ INSTALLED_APPS = [
     'corsheaders',
     # 'django_libs',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'multilingual_survey',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.twitter',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -61,6 +66,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SITE_ID = 1
 ROOT_URLCONF = 'OpenSurvey.urls'
 
 TEMPLATES = [
@@ -82,6 +88,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'OpenSurvey.wsgi.application'
 
 
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 DATABASES = {
@@ -96,6 +112,7 @@ DATABASES = {
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
+
 
 
 # Password validation
@@ -140,7 +157,7 @@ USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ('en', _('English')),
+    ('en-us', _('English')),
     ('af', _('Afrikaans')),
     ('ar', _('Arabic')),
     ('ast', _('Asturian')),
