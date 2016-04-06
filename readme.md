@@ -33,7 +33,7 @@ If wanting to backup from the Heroku database and restore the data locally, the 
 ```
 $ heroku pg:backups capture
 $ curl -o latest.dump `heroku pg:backups public-url`
-$ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U opensurvey_admin -d opensurvey  ~/git/OpenSurvey/latest.dump
+$ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U opensurvey_admin -d opensurvey  ./latest.dump
 ```
 For more info see:
 

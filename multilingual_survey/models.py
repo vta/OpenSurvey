@@ -150,7 +150,7 @@ class SurveyAnswer(TranslationModelMixin, TranslatableModel):
     question = models.ForeignKey(
         SurveyQuestion,
         verbose_name=_('Question'),
-        related_name='answers'
+        related_name='answers',
     )
 
     generic_position = fields.GenericRelation(
@@ -202,6 +202,8 @@ class SurveyResponse(models.Model):
         SurveyAnswer,
         verbose_name=_('Answer'),
         related_name='responses',
+        null=True,
+        blank=True,
     )
 
     other_answer_numeric = models.IntegerField(
@@ -213,6 +215,7 @@ class SurveyResponse(models.Model):
     other_answer = models.CharField(
         verbose_name=_('Other answer'),
         max_length=1024,
+        null=True,
         blank=True,
     )
 
