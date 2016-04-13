@@ -8,7 +8,7 @@ from . import models
 class SurveyAnswerSerializer(TranslatableModelSerializer):
     class Meta:
         model = models.SurveyAnswer
-        fields = ['pk', 'title', 'slug', 'question']
+        fields = ['pk', 'generic_position', 'title', 'slug', 'question']
 
 class SurveyQuestionSerializer(TranslatableModelSerializer):
     answers = SurveyAnswerSerializer(many=True)
@@ -19,7 +19,7 @@ class SurveyQuestionSerializer(TranslatableModelSerializer):
 
     class Meta:
         model = models.SurveyQuestion
-        fields = ['pk', 'title', 'content', 'slug', 'survey', 'is_multi_select', 'type', 'scale_min','scale_max', 'has_other_field', 'required', 'answers']
+        fields = ['pk', 'generic_position', 'title', 'content', 'slug', 'survey', 'is_multi_select', 'type', 'scale_min','scale_max', 'has_other_field', 'required', 'answers']
 
 class SurveyDetailSerializer(TranslatableModelSerializer):
     questions = SurveyQuestionSerializer(many=True)
