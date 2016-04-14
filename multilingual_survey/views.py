@@ -152,6 +152,7 @@ class SurveyDetail(APIView):
         for q in questions:
             questions_serialized.append(SurveyQuestionSerializer(q).data)
             questions_serialized[-1]['answers']  = SurveyAnswerSerializer(self.get_related_answers(q.pk), many=True).data
+            questions_serialized[-1]['position'] = q.generic_position.get_queryset()[0].position
            
         resp_obj = SurveySerializer(survey).data
         resp_obj['questions'] = questions_serialized
