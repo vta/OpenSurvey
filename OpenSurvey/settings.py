@@ -233,6 +233,7 @@ LANGUAGES = [
     ('sv', _('Swedish')),
     ('sw', _('Swahili')),
     ('ta', _('Tamil')),
+    ('tgl', _('Tagalog')),
     ('te', _('Telugu')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
