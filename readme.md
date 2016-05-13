@@ -23,8 +23,11 @@ DATABASE_URL=[database type]://[username]:[password]@[host]:[port]/[database nam
 SECRET_KEY=[random key to be used as a secret]
 DEBUG=True
 ```
+The `SECRET_KEY` can be anything, but an easy way to make something nice and random is with the `openssl` command:
 
-create the database if you haven't already, then allow privileges to that user on that database.
+    $ openssl rand -base64 64
+    
+Create the database if you haven't already, then allow privileges to that user on that database.
 
 Example:
 
