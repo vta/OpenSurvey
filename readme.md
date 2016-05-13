@@ -1,9 +1,22 @@
 # OpenSurvey
 
 
-This project uses [Foreman](https://github.com/ddollar/foreman) for managing secrets like the database username and password.
+This project uses [Foreman](https://github.com/ddollar/foreman) for managing secrets like the database username and password and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) for managing the Python packages.
 
-To get started, install Foreman (`$ gem install foreman`) and then create a `.env` file in the base directory containing the following:
+When deploying to Ubuntu 14.04, run the following command to make sure the required packages are present:
+
+    $ sudo apt-get install git python-pip postgresql postgresql-contrib python-psycopg2 python-dev libpq-dev ruby
+    $ sudo pip install virtualenv
+    $ gem install foreman
+
+Now clone the repository and install the required Python packages:
+
+    $ git clone https://github.com/vta/OpenSurvey.git
+    $ cd OpenSurvey
+    $ . venv/bin/activate
+    $ pip install -r requirements.txt
+
+Then create a `.env` file in the base directory containing the following:
 
 ```
 DATABASE_URL=[database type]://[username]:[password]@[host]:[port]/[database name]
