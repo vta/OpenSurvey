@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework import status, viewsets
 from django.forms.models import model_to_dict
+import csv
 
 from django.contrib.auth.models import User
 from . import forms
@@ -218,6 +219,15 @@ class SurveyResponseSummary(APIView):
             x[k] = sum([float(vp) for vp in v])/len(v)
         return x
 
+    def response_distribution(self, d):
+        res = {}
+        for v in d.values():
+            res.setdefault(v['question_id'], {})
+            # res[v['question_id']]['question_text'] = models.SurveyQuestion.objects.language('en').all().filter(id=v['question_id']).values()[0]['title']
+            res[v['question_id']].setdefault(v['other_answer_numeric'], 0)
+            res[v['question_id']][v['other_answer_numeric']] = res[v['question_id']][v['other_answer_numeric']]+1
+        return res
+
     def get(self, request, pk, format=None):
         output = request.query_params.get("output")
         if output == 'average':
@@ -225,8 +235,26 @@ class SurveyResponseSummary(APIView):
 
             set_as_dict = self.list_to_dict(queryset)
             averages = self.dict_avg(set_as_dict)
-            response = {'stats': {'count' : len(queryset)}, 'averages' : averages}
+            distribution = self.response_distribution(queryset)
+            response = {'stats': {'count' : len(queryset)}, 'averages' : averages, 'distribution' : distribution}
             return JSONResponse(response)
+        elif output == 'distribution':
+            queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
+            distribution = self.response_distribution(queryset)
+
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="response_distributions.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow(['question id', 'question text']+distribution.itervalues().next().keys())
+
+            for d in distribution:
+                row = [d]
+                row = row + [models.SurveyQuestion.objects.language('en').all().filter(id=d).values()[0]['title']]
+                writer.writerow(row+distribution[d].values());
+            return response
+
         elif output == 'values':
             queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
             set_as_dict = self.list_to_dict(queryset)
