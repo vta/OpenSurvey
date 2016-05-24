@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework import status, viewsets
 from django.forms.models import model_to_dict
+from datetime import datetime
 import csv
 
 from django.contrib.auth.models import User
@@ -244,7 +245,7 @@ class SurveyResponseSummary(APIView):
 
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="response_distributions.csv"'
+            response['Content-Disposition'] = 'attachment; filename="responses_distributions.csv"'
 
             writer = csv.writer(response)
             writer.writerow(['question id', 'question text']+distribution.itervalues().next().keys())
@@ -254,6 +255,35 @@ class SurveyResponseSummary(APIView):
                 row = row + [models.SurveyQuestion.objects.language('en').all().filter(id=d).values()[0]['title']]
                 writer.writerow(row+distribution[d].values());
             return response
+        elif output == 'grouped':
+            queryset = models.SurveyResponse.objects.filter(question__survey_id=pk)
+            sorted_queryset = sorted(queryset, key=lambda x : x.date_created)
+            responses = []
+            if len(sorted_queryset) == 0 :
+                return JSONResponse(responses)
+
+            last = sorted_queryset[0].date_created
+            current_index = 0
+            for q in sorted_queryset:
+                delta = q.date_created - last
+
+                if delta.total_seconds() >= 1  or delta.microseconds > 60000:   # 6/100 of 1 second
+                    current_index  = current_index+1
+                if len(responses) == current_index:
+                    responses.append([])
+                responses[current_index].append(q)
+                last = q.date_created
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="responses_grouped.csv"'
+            writer = csv.writer(response)
+            writer.writerow(['response number', 'UTC date']+['other_answer_numeric - ' + str(t.question.title) for t in responses[0]] + ['answer - ' + str(t.question.title) for t in responses[0]] + ['other_answer - ' + str(t.question.title) for t in responses[0]])
+
+            for i, res in enumerate(responses):
+                writer.writerow([i, res[0].date_created] + [q.other_answer_numeric for q in res] + [q.answer for q in res] + [q.other_answer for q in res])
+
+            return response
+
 
         elif output == 'values':
             queryset = models.SurveyResponse.objects.filter(question__survey_id=pk).values_list('question_id','other_answer_numeric')
