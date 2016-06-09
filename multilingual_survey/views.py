@@ -19,8 +19,25 @@ from django.contrib.auth.models import User
 from . import forms
 from . import models
 
+import logging
+from ipware.ip import get_ip
+
 from .serializers import SurveySerializer, SurveyDetailSerializer, SurveyQuestionSerializer, UserSerializer, SurveyAnswerSerializer, SurveyResponseSerializer
 
+from django.conf import settings
+from django.middleware import csrf
+
+logger = logging.getLogger(__name__)
+
+
+def get_or_create_csrf_token(request):
+    # http://stackoverflow.com/a/18781980/940217
+    token = request.META.get('CSRF_COOKIE', None)
+    if token is None:
+        token = csrf._get_new_csrf_key()
+        request.META['CSRF_COOKIE'] = token
+    request.META['CSRF_COOKIE_USED'] = True
+    return token
 
 class SurveyReportAdminView(DetailView):
     """A view to display results of a survey for admins."""
@@ -148,6 +165,21 @@ class SurveyDetail(APIView):
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, pk, format=None):
+
+        #if request.session.get('last_visit'):
+        #    # The session has a value for the last visit
+        #    last_visit_time = request.session.get('last_visit')
+        #    visits = request.session.get('visits', 0)
+        #    if (datetime.now() - datetime.strptime(last_visit_time[:-7], "%Y-%m-%d %H:%M:%S")).days > 0:
+        #        request.session['visits'] = visits + 1
+        #        request.session['last_visit'] = str(datetime.now())
+        #else:
+        #    # The get returns None, and the session does not have a value for the last visit.
+        #    request.session['last_visit'] = str(datetime.now())
+        #    request.session['visits'] = 1
+        
+        
+
         survey = self.get_object(pk)
         questions = self.get_related_questions(pk)
         questions_serialized = []
@@ -157,6 +189,12 @@ class SurveyDetail(APIView):
             questions_serialized[-1]['position'] = q.generic_position.get_queryset()[0].position
            
         resp_obj = SurveySerializer(survey).data
+
+        csrftoken = get_or_create_csrf_token(request)
+        resp_obj['csrftoken'] = csrftoken
+        if not request.session.exists(request.session.session_key):
+            request.session.create() 
+        resp_obj['sessionid'] = request.session.session_key
         resp_obj['questions'] = questions_serialized
 
         return JSONResponse(resp_obj)
@@ -201,6 +239,16 @@ class SurveyResponseList(APIView):
 
     def post(self, request, format=None):
         data = JSONParser().parse(request)
+        ip = get_ip(request)
+
+
+        if ip is not None:
+            logger.info("we have an IP address for user : "+str(ip))
+
+        for i in data:
+            i['ip_address'] = ip
+            logger.info(i)
+
         serializer = SurveyResponseSerializer(data=data, many=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
@@ -277,10 +325,10 @@ class SurveyResponseSummary(APIView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="responses_grouped.csv"'
             writer = csv.writer(response)
-            writer.writerow(['response number', 'UTC date']+['other_answer_numeric - ' + str(t.question.title) for t in responses[0]] + ['answer - ' + str(t.question.title) for t in responses[0]] + ['other_answer - ' + str(t.question.title) for t in responses[0]])
+            writer.writerow(['response number', 'UTC date','ip_address','session_id']+['other_answer_numeric - ' + str(t.question.title) for t in responses[0]] + ['answer - ' + str(t.question.title) for t in responses[0]] + ['other_answer - ' + str(t.question.title) for t in responses[0]])
 
             for i, res in enumerate(responses):
-                writer.writerow([i, res[0].date_created] + [q.other_answer_numeric for q in res] + [q.answer for q in res] + [q.other_answer for q in res])
+                writer.writerow([i, res[0].date_created] + [res[0].ip_address,res[0].session_id] +[q.other_answer_numeric for q in res] + [q.answer for q in res] + [q.other_answer for q in res])
 
             return response
 

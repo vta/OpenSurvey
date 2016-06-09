@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 from django.utils.translation import ugettext_lazy as _
+import logging
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,6 +30,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+if DEBUG:
+    # will output to your console
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format = '%(asctime)s %(levelname)s %(message)s',
+    )
+else:
+    # will output to logging file
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format = '%(asctime)s %(levelname)s %(message)s',
+        filename = '/out.log',
+        filemode = 'a'
+    )
 
 # Application definition
 
@@ -87,8 +103,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'OpenSurvey.wsgi.application'
 
-
-
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -114,6 +128,7 @@ db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
 
+SESSION_COOKIE_HTTPONLY = False
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

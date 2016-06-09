@@ -48,4 +48,4 @@ class SurveyResponseSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.SurveyResponse
-        fields = ( 'session_id', 'question', 'answer', 'other_answer', 'other_answer_numeric', 'date_created')
+        fields = ( 'ip_address', 'session_id', 'question', 'answer', 'other_answer', 'other_answer_numeric', 'date_created')

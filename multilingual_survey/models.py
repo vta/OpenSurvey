@@ -178,6 +178,12 @@ class SurveyResponse(models.Model):
     :date_created: Creation date of this answer.
 
     """
+    ip_address = models.CharField(
+        verbose_name=_('IP Address'),
+        max_length=32,
+        blank=True,
+    )
+
     user = models.ForeignKey(
         'auth.User',
         verbose_name=_('User'),
