@@ -140,6 +140,7 @@ class SurveyAnswer(TranslationModelMixin, TranslatableModel):
     """
     translations = TranslatedFields(
         title=models.CharField(verbose_name=_('Title'), max_length=256),
+        subtitle=models.CharField(verbose_name=_('SubTitle'), max_length=256, blank=True, null=True,),
     )
 
     slug = models.SlugField(
@@ -151,6 +152,12 @@ class SurveyAnswer(TranslationModelMixin, TranslatableModel):
         SurveyQuestion,
         verbose_name=_('Question'),
         related_name='answers',
+    )
+
+    meta_integer = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name = _('meta integer'),
     )
 
     generic_position = fields.GenericRelation(
