@@ -325,11 +325,14 @@ class SurveyResponseSummary(APIView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="responses_grouped.csv"'
             writer = csv.writer(response)
-            writer.writerow(['response number', 'UTC date','ip_address','session_id']+['other_answer_numeric - ' + str(t.question.title) for t in responses[0]] + ['answer - ' + str(t.question.title) for t in responses[0]] + ['other_answer - ' + str(t.question.title) for t in responses[0]])
+            field_names = [f.name for f in models.SurveyResponse._meta.fields]
+            exclude = ["id", "ip_address", "user", "session_id", "date_created"]
+            field_names = [ f for f in field_names if f not in exclude]
 
+            writer.writerow(['response number', 'UTC date created','ip_address','session_id']+field_names)
+            
             for i, res in enumerate(responses):
-                writer.writerow([i, res[0].date_created] + [res[0].ip_address,res[0].session_id] +[q.other_answer_numeric for q in res] + [q.answer for q in res] + [q.other_answer for q in res])
-
+                writer.writerow([i, res[0].date_created] + [res[0].ip_address, res[0].session_id] +[ [ unicode(getattr(r, f)).encode('utf-8') for r in res] for f in field_names])
             return response
 
 
